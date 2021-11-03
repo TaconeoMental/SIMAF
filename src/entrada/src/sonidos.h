@@ -19,3 +19,21 @@ Cancion temp_normal =
     }, 1
 };
 
+Cancion error =
+{
+    {
+        {NOTE_GS7, 200},
+        {NOTE_GS7, 200},
+        {NOTE_GS7, 200}
+    }, 3
+};
+
+Cancion fiebre =
+{
+    {
+        {NOTE_GS4, 200},
+        {NOTE_GS4, 200},
+        {NOTE_GS4, 200}
+    }, 3
+};
+

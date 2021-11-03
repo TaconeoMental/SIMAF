@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "wifi.h"
+#include "config.h"
 
 void wifi_module_init(WifiModule *wifi, SoftwareSerial *ss)
 {
@@ -9,7 +10,12 @@ void wifi_module_init(WifiModule *wifi, SoftwareSerial *ss)
     wifi->serial = ss;
 
     wifi_module_send_command(wifi, "AT", "OK");
-    wifi_module_send_command(wifi, "AT+GMR", "OK");
+    wifi_module_send_command(wifi, "AT+CWMODE=1", "OK");
+    //wifi_module_send_command(wifi, "AT+CIPMUX=1", "OK");
+
+    char comando[50];
+    sprintf(comando, "AT+CWJAP=\"%s\",\"%s\"", WIFI_SSID, WIFI_PASS);
+    wifi_module_send_command(wifi, comando, "WIFI CONNECTED");
 }
 
 bool wifi_module_send_command(WifiModule *wifi, char *cmd, char *expect)
@@ -65,4 +71,25 @@ bool wifi_module_send_command(WifiModule *wifi, char *cmd, char *expect)
     Serial.println(full_line);
 
     return strcmp(full_line, expect) == 0;
+}
+
+void wifi_module_send_http_req(WifiModule *wifi, char *ruta)
+{
+    char comando[50];
+    sprintf(comando, "AT+CIPSTART=\"TCP\",\"%s\",%s", SERVER_LOCAL_IP, SERVER_LOCAL_PUERTO);
+    wifi_module_send_command(wifi, comando, "OK");
+
+    char contenido[100];
+    sprintf(contenido, "GET %s HTTP/1.1\r\n", ruta);
+
+    Serial.println(contenido);
+    //String com = String("AT+CIPSEND=") + String(content.length() + 4);
+    comando[0] = '\0';
+    sprintf(comando, "AT+CIPSEND=%d", strlen(contenido) + 4);
+    //delay(5000);
+    wifi_module_send_command(wifi, comando, "OK");
+    Serial.println(comando);
+    wifi->serial->println(contenido);
+
+    wifi_module_send_command(wifi, "AT+CIPCLOSE", "OK");
 }

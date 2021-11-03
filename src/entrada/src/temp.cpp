@@ -7,18 +7,24 @@
 
 extern Adafruit_MLX90614 mlx;
 
-double readStableTemp(uint16_t ms)
+double readStableTemp(uint16_t ms, uint16_t timeout)
 {
     // TODO: Añadir un timeout?
     double temp;
     double last_temp;
 
     unsigned long start_time;
+    unsigned long timeout_start = millis();
 
     bool start_measure = true;
 
     while (1)
     {
+        if (millis() - timeout_start >= timeout)
+        {
+            return 0;
+        }
+
         if (start_measure)
         {
             start_time = millis();
@@ -34,6 +40,7 @@ double readStableTemp(uint16_t ms)
             }
             break;
         }
+
 
         last_temp = temp;
         temp = mlx.readObjectTempC();

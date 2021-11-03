@@ -13,6 +13,7 @@ struct WifiModule
 };
 void wifi_module_init(WifiModule *wifi, SoftwareSerial *ss);
 bool wifi_module_send_command(WifiModule *wifi, char *cmd, char *expect);
+void wifi_module_send_http_req(WifiModule *wifi, char *ruta);
 
 #endif
 
