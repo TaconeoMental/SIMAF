@@ -10,6 +10,7 @@ void wifi_module_init(WifiModule *wifi, SoftwareSerial *ss)
     wifi->serial = ss;
 
     wifi_module_send_command(wifi, "AT", "OK");
+    wifi_module_send_command(wifi, "AT+CWQAP", "OK");
     wifi_module_send_command(wifi, "AT+CWMODE=1", "OK");
     //wifi_module_send_command(wifi, "AT+CIPMUX=1", "OK");
 
@@ -79,7 +80,7 @@ void wifi_module_send_http_req(WifiModule *wifi, char *ruta)
     sprintf(comando, "AT+CIPSTART=\"TCP\",\"%s\",%s", SERVER_LOCAL_IP, SERVER_LOCAL_PUERTO);
     wifi_module_send_command(wifi, comando, "OK");
 
-    char contenido[100];
+    char contenido[50];
     sprintf(contenido, "GET %s HTTP/1.1\r\n", ruta);
 
     Serial.println(contenido);

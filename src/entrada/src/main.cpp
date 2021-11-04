@@ -69,11 +69,13 @@ void setup()
 
     mlx.begin();
 
-    wifi_module_init(&wifi, &wifiSerial);
-
     tocador_init(&tocador, BUZZER_PIN);
 
     initSensorDist();
+
+    wifi_module_init(&wifi, &wifiSerial);
+    delay(10000);
+    wifi_module_send_http_req(&wifi, "/?action=nuevo");
 
     tocador_tocar(&tocador, &inicio);
 }
@@ -107,7 +109,7 @@ void loop()
         LCD_P("SU TEMPERATURA:", temp_str);
         tocador_tocar(&tocador, &temp_normal);
 
-        wifi_module_send_http_req(&wifi, "/index.php?a=sumar");
+        wifi_module_send_http_req(&wifi, "/?action=sumar");
         //delay(3000);
     }
     else
