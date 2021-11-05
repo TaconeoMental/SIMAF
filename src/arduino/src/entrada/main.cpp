@@ -8,8 +8,7 @@
 #include "sonido.h"
 #include "sonidos.h"
 #include "temp.h"
-
-#define DEBUG true
+#include "config.h"
 
 // Módulo Wifi
 #define WIFI_PIN_RX 6
@@ -58,10 +57,12 @@ double waitToRead();
 void setup()
 {
     Serial.begin(9600);
+#if DEBUG
     while (!Serial)
         ;
+#endif
 
-    Serial.println("Calling setup()");
+    DEBUG_SERIAL.println("Calling setup()");
 
     LCD.begin(16, 2);
 
@@ -73,9 +74,9 @@ void setup()
 
     initSensorDist();
 
-    wifi_module_init(&wifi, &wifiSerial);
+    wifi_module_init(&wifi, &wifiSerial, WIFI_SSID, WIFI_PASS);
     delay(10000);
-    wifi_module_send_http_req(&wifi, "/?action=nuevo");
+    wifi_module_send_http_req(&wifi, "/?action=nuevo", SERVER_LOCAL_IP, SERVER_LOCAL_PUERTO);
 
     tocador_tocar(&tocador, &inicio);
 }
@@ -109,7 +110,7 @@ void loop()
         LCD_P("SU TEMPERATURA:", temp_str);
         tocador_tocar(&tocador, &temp_normal);
 
-        wifi_module_send_http_req(&wifi, "/?action=sumar");
+        wifi_module_send_http_req(&wifi, "/?action=sumar", SERVER_LOCAL_IP, SERVER_LOCAL_PUERTO);
         //delay(3000);
     }
     else
@@ -121,7 +122,7 @@ void loop()
         char ruta[30];
         dtostrf(temp, 4, 2, temp_str);
         sprintf(ruta, "/index.php?a=fiebre&t=%s", temp_str);
-        wifi_module_send_http_req(&wifi, ruta);
+        wifi_module_send_http_req(&wifi, ruta, SERVER_LOCAL_IP, SERVER_LOCAL_PUERTO);
     }
 }
 

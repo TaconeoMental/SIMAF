@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <Adafruit_MLX90614.h>
 
+#include "config.h"
+
 #define CLOSE(x, y) (abs((x) - (y)) <= TEMP_ERROR_MARGIN)
 
 extern Adafruit_MLX90614 mlx;
@@ -44,7 +46,7 @@ double readStableTemp(uint16_t ms, uint16_t timeout)
 
         last_temp = temp;
         temp = mlx.readObjectTempC();
-        Serial.println(temp);
+        DEBUG_SERIAL.println(temp);
 
         if (!CLOSE(temp, last_temp))
         {

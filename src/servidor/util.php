@@ -64,4 +64,8 @@ class ArchivoDat {
     }
 }
 
+function enviar_mail($temp) {
+    // TODO
+}
+
 ?>

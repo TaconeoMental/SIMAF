@@ -22,6 +22,9 @@ if (isset($_GET['action'])) {
         $dat->loggear_datos();
         break;
     case "fiebre":
+        if (isset($_GET['t'])) {
+            enviar_mail(floatval($_GET['t']));
+        }
         break;
     }
 }

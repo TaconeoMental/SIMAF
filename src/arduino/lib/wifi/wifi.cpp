@@ -2,7 +2,7 @@
 #include "wifi.h"
 #include "config.h"
 
-void wifi_module_init(WifiModule *wifi, SoftwareSerial *ss)
+void wifi_module_init(WifiModule *wifi, SoftwareSerial *ss, const char *ssid, const char *pass)
 {
     Serial.println("Calling wifi_module_init()");
 
@@ -15,7 +15,7 @@ void wifi_module_init(WifiModule *wifi, SoftwareSerial *ss)
     //wifi_module_send_command(wifi, "AT+CIPMUX=1", "OK");
 
     char comando[50];
-    sprintf(comando, "AT+CWJAP=\"%s\",\"%s\"", WIFI_SSID, WIFI_PASS);
+    sprintf(comando, "AT+CWJAP=\"%s\",\"%s\"", ssid, pass);
     wifi_module_send_command(wifi, comando, "WIFI CONNECTED");
 }
 
@@ -25,8 +25,8 @@ bool wifi_module_send_command(WifiModule *wifi, char *cmd, char *expect)
     Serial.print("Enviando: ");
     Serial.println(cmd);
 
-    uint8_t curr_index = 0;
-    uint8_t exp_length = strlen(expect);
+    //uint8_t curr_index = 0;
+    //uint8_t exp_length = strlen(expect);
     uint32_t deadline = millis() + TIMEOUT;
 
     uint8_t line_index = 0;
@@ -74,23 +74,23 @@ bool wifi_module_send_command(WifiModule *wifi, char *cmd, char *expect)
     return strcmp(full_line, expect) == 0;
 }
 
-void wifi_module_send_http_req(WifiModule *wifi, char *ruta)
+void wifi_module_send_http_req(WifiModule *wifi, char *ruta, const char *ip, const char *puerto)
 {
     char comando[50];
-    sprintf(comando, "AT+CIPSTART=\"TCP\",\"%s\",%s", SERVER_LOCAL_IP, SERVER_LOCAL_PUERTO);
+    char contenido[64];
+
+    sprintf(comando, "AT+CIPSTART=\"TCP\",\"%s\",%s", ip, puerto);
     wifi_module_send_command(wifi, comando, "OK");
 
-    char contenido[50];
     sprintf(contenido, "GET %s HTTP/1.1\r\n", ruta);
-
     Serial.println(contenido);
-    //String com = String("AT+CIPSEND=") + String(content.length() + 4);
+
     comando[0] = '\0';
     sprintf(comando, "AT+CIPSEND=%d", strlen(contenido) + 4);
-    //delay(5000);
     wifi_module_send_command(wifi, comando, "OK");
+
     Serial.println(comando);
-    wifi->serial->println(contenido);
+    wifi->serial->println(comando);
 
     wifi_module_send_command(wifi, "AT+CIPCLOSE", "OK");
 }
