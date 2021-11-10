@@ -23,7 +23,7 @@ if (isset($_GET['action'])) {
         break;
     case "fiebre":
         if (isset($_GET['t'])) {
-            enviar_mail(floatval($_GET['t']));
+            enviar_mail_fiebre($_GET['t']);
         }
         break;
     }
