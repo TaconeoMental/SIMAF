@@ -66,7 +66,7 @@ class ArchivoDat {
 
     function loggear_datos() {
         $fp = fopen($this->get_filename_actual(), "a");
-        fwrite($fp, date("c").",".strval($this->get_aforo())."\n");
+        fwrite($fp, date("Y/m/d H:i:s").",".strval($this->get_aforo())."\n");
         fclose($fp);
     }
 }
